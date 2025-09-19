@@ -3,7 +3,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-DOC_PATH = "EggBred 2025 FDD.docx"
+DOC_PATH = "EggBred 2025 FDD (09-16-25).docx"
 INDEX_PATH = "faiss_index"
 
 def build_index():
