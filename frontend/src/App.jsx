@@ -212,7 +212,6 @@ function App() {
               background: msg.role === "user" ? "black" : "#FFD502",
               color: msg.role === "user" ? "white" : "black",
               fontSize: "20px",
-              // fontWeight: "500",
               fontWeight: msg.role === "user" ? "600" : "500",
               lineHeight: "1.6",
               boxShadow: "0 4px 10px rgba(0,0,0,0.15)"
@@ -277,7 +276,6 @@ function App() {
           disabled={loading}
           rows={1}
         />
-
         <button 
           onClick={sendMessage}
           disabled={loading || !input.trim()}
@@ -305,4 +303,4 @@ function App() {
 
 }
 
-export default App;
+export default App; 
