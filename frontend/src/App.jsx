@@ -7,6 +7,44 @@ function App() {
   const [debugInfo, setDebugInfo] = useState("");
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const [uploadStatus, setUploadStatus] = useState("");
+
+  const handleFileUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  setUploadStatus("📤 Uploading...");
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      setUploadStatus(`❌ Upload failed: ${res.status} ${errorText}`);
+      return;
+    }
+
+    // ✅ FIX: parse JSON safely
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonErr) {
+      setUploadStatus("⚠️ Upload succeeded, but invalid JSON response");
+      return;
+    }
+
+    setUploadStatus(data.status || "✅ Uploaded!");
+
+  } catch (err) {
+    setUploadStatus(`❌ Upload failed: ${err.message}`);
+  }
+};
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -30,7 +68,7 @@ function App() {
     setDebugInfo("Sending request...");
 
     try {
-      const res = await fetch("http://localhost:8000/ask", {
+      const res = await fetch("http://127.0.0.1:8000/ask", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -256,6 +294,32 @@ function App() {
         gap: "10px",
         alignItems: "flex-end"
       }}>
+        {/* Upload Button */}
+      <input
+        type="file"
+        accept=".doc,.docx,.pdf"
+        onChange={handleFileUpload}
+        style={{ display: "none" }}
+        id="fileUpload"
+      />
+      <label
+        htmlFor="fileUpload"
+        style={{
+          width: "60px",
+          height: "62px",
+          borderRadius: "12px",
+          border: "2px solid black",
+          background: "#fff",
+          color: "black",
+          fontSize: "20px",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        📎
+      </label>
         <textarea
           ref={inputRef}
           style={{
@@ -297,6 +361,12 @@ function App() {
           ➤
         </button>
       </div>
+      {/* Upload Status */}
+      {uploadStatus && (
+        <p style={{ fontSize: "12px", padding: "4px 16px", color: "gray" }}>
+          {uploadStatus}
+        </p>
+      )}
     </div>
   </div>
 );
